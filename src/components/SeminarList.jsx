@@ -3,16 +3,19 @@ import axios from 'axios';
 import Modal from 'react-modal';
 import SeminarEdit from './SeminarEdit';
 
+// Устанавливаем корневой элемент для модальных окон
 Modal.setAppElement('#root');
 
 const SeminarList = () => {
-  const [seminars, setSeminars] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedSeminar, setSelectedSeminar] = useState(null);
+  // Состояния для управления данными и UI
+  const [seminars, setSeminars] = useState([]); // Список семинаров
+  const [loading, setLoading] = useState(true); // Индикатор загрузки
+  const [error, setError] = useState(null); // Состояние ошибки
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Модальное окно удаления
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // Модальное окно редактирования
+  const [selectedSeminar, setSelectedSeminar] = useState(null); // Выбранный семинар для редактирования/удаления
 
+  // Функция загрузки списка семинаров с сервера
   const fetchSeminars = async () => {
     try {
       const response = await axios.get('http://localhost:3001/seminars');
@@ -26,14 +29,16 @@ const SeminarList = () => {
     }
   };
 
+  // Загружаем данные при монтировании компонента
   useEffect(() => {
     fetchSeminars();
   }, []);
 
+  // Обработчик удаления семинара
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:3001/seminars/${id}`);
-      await fetchSeminars();
+      await fetchSeminars(); // Обновляем список после удаления
       setIsDeleteModalOpen(false);
     } catch (err) {
       setError('Ошибка при удалении семинара');
@@ -41,10 +46,11 @@ const SeminarList = () => {
     }
   };
 
+  // Обработчик редактирования семинара
   const handleEdit = async (updatedSeminar) => {
     try {
       await axios.put(`http://localhost:3001/seminars/${updatedSeminar.id}`, updatedSeminar);
-      await fetchSeminars();
+      await fetchSeminars(); // Обновляем список после редактирования
       setIsEditModalOpen(false);
     } catch (err) {
       setError('Ошибка при обновлении семинара');
@@ -52,39 +58,43 @@ const SeminarList = () => {
     }
   };
 
+  // Показываем индикатор загрузки
   if (loading) return <div>Загрузка...</div>;
+  // Показываем ошибку, если она есть
   if (error) return <div>{error}</div>;
 
   return (
     <div className="seminar-list">
       <h2>Список семинаров</h2>
       <div className="seminar__content">
-      {seminars.map((seminar) => (
-        <div key={seminar.id} className="seminar__item">
-          <h3>{seminar.title}</h3>
-          <p>{seminar.description}</p>
-          <div className="seminar-actions">
-            <button
-              onClick={() => {
-                setSelectedSeminar(seminar);
-                setIsEditModalOpen(true);
-              }}
-            >
-              Редактировать
-            </button>
-            <button
-              onClick={() => {
-                setSelectedSeminar(seminar);
-                setIsDeleteModalOpen(true);
-              }}
-            >
-              Удалить
-            </button>
+        {/* Отображаем список семинаров */}
+        {seminars.map((seminar) => (
+          <div key={seminar.id} className="seminar__item">
+            <h3>{seminar.title}</h3>
+            <p>{seminar.description}</p>
+            <div className="seminar-actions">
+              <button
+                onClick={() => {
+                  setSelectedSeminar(seminar);
+                  setIsEditModalOpen(true);
+                }}
+              >
+                Редактировать
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedSeminar(seminar);
+                  setIsDeleteModalOpen(true);
+                }}
+              >
+                Удалить
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
-        </div>
+        ))}
+      </div>
 
+      {/* Модальное окно подтверждения удаления */}
       <Modal
         isOpen={isDeleteModalOpen}
         onRequestClose={() => setIsDeleteModalOpen(false)}
@@ -96,6 +106,7 @@ const SeminarList = () => {
         <button onClick={() => setIsDeleteModalOpen(false)}>Отмена</button>
       </Modal>
 
+      {/* Модальное окно редактирования */}
       <Modal
         isOpen={isEditModalOpen}
         onRequestClose={() => setIsEditModalOpen(false)}

@@ -1,12 +1,14 @@
 import { useState } from 'react';
 
 const SeminarEdit = ({ seminar, onSave, onCancel }) => {
+  // Инициализируем состояние формы данными текущего семинара
   const [formData, setFormData] = useState({
     id: seminar.id,
     title: seminar.title,
     description: seminar.description,
   });
 
+  // Обработчик изменения полей формы
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -15,15 +17,17 @@ const SeminarEdit = ({ seminar, onSave, onCancel }) => {
     }));
   };
 
+  // Обработчик отправки формы
   const handleSubmit = (e) => {
-    e.preventDefault();
-    onSave(formData);
+    e.preventDefault(); // Предотвращаем стандартное поведение формы
+    onSave(formData); // Передаем обновленные данные в родительский компонент
   };
 
   return (
     <form onSubmit={handleSubmit} className="seminar-edit-form">
       <h3>Редактирование семинара</h3>
       
+      {/* Поле для редактирования названия */}
       <div className="form-group">
         <label htmlFor="title">Название:</label>
         <input
@@ -36,6 +40,7 @@ const SeminarEdit = ({ seminar, onSave, onCancel }) => {
         />
       </div>
 
+      {/* Поле для редактирования описания */}
       <div className="form-group">
         <label htmlFor="description">Описание:</label>
         <textarea
@@ -47,6 +52,7 @@ const SeminarEdit = ({ seminar, onSave, onCancel }) => {
         />
       </div>
 
+      {/* Кнопки управления формой */}
       <div className="form-actions">
         <button type="submit">Сохранить</button>
         <button type="button" onClick={onCancel}>Отмена</button>

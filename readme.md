@@ -1,4 +1,4 @@
-# Тестовое задание для Junior React Developer
+# Тестовое задание для React Developer
 
 ## Задание
 
